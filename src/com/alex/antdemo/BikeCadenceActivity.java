@@ -4,24 +4,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.EnumSet;
 
-import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
-import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.DataState;
-import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.ICalculatedRrIntervalReceiver;
-import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IHeartRateDataReceiver;
-import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IPage4AddtDataReceiver;
-import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.RrFlag;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeCadencePcc;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeCadencePcc.ICalculatedCadenceReceiver;
 import com.dsi.ant.plugins.antplus.pcc.defines.DeviceState;
 import com.dsi.ant.plugins.antplus.pcc.defines.EventFlag;
 import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
+import com.dsi.ant.plugins.antplus.pccbase.AntPlusBikeSpdCadCommonPcc.IBikeSpdCadAsyncScanResultReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController;
 import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IDeviceStateChangeReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IPluginAccessResultReceiver;
-import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.ICumulativeOperatingTimeReceiver;
-import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IManufacturerAndSerialReceiver;
-import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IVersionAndModelReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.AntPlusBikeSpdCadCommonPcc.BikeSpdCadAsyncScanResultDeviceInfo;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDeviceInfo;
-import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.IAsyncScanResultReceiver;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -40,9 +34,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class MainActivity extends Activity {
+public class BikeCadenceActivity extends Activity {
 
-	protected static final String TAG = MainActivity.class.getSimpleName();
+	protected static final String TAG = BikeCadenceActivity.class.getSimpleName();
 	
 	TextView mTextStatus;
 	TextView mTextValue;
@@ -50,10 +44,10 @@ public class MainActivity extends Activity {
 	ArrayAdapter<String> mAdapterDeviveList;
 	
 	//Ant
-	AntPlusHeartRatePcc hrPcc = null;
-	AsyncScanController<AntPlusHeartRatePcc> hrScanCtrl;
+	AntPlusBikeCadencePcc hrPcc = null;
+	AsyncScanController<AntPlusBikeCadencePcc> hrScanCtrl;
 	ArrayList<AsyncScanController.AsyncScanResultDeviceInfo> mScannedDeviceInfos;
-	PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle = null;
+	PccReleaseHandle<AntPlusBikeCadencePcc> releaseHandle = null;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,47 +102,35 @@ public class MainActivity extends Activity {
     //启动扫描
     protected void startScan()
     {
-        hrScanCtrl = AntPlusHeartRatePcc.requestAsyncScanController(this, 0,
-            new IAsyncScanResultReceiver()
-        {
-            @Override
-            public void onSearchStopped(RequestAccessResult reasonStopped)
-            {
-                //The triggers calling this function use the same codes and require the same actions as those received by the standard access result receiver
-                //base_IPluginAccessResultReceiver.onResultReceived(null, reasonStopped, DeviceState.DEAD);
-            	Log.d(TAG, "onSearchStopped");
-            }
-
-            @Override
-            public void onSearchResult(final AsyncScanResultDeviceInfo deviceFound)
-            {
-            	Log.d(TAG, "onSearchResult : " + deviceFound.getDeviceDisplayName());
-            	
-                for(AsyncScanResultDeviceInfo i: mScannedDeviceInfos)
-                {
-                    //The current implementation of the async scan will reset it's ignore list every 30s,
-                    //So we have to handle checking for duplicates in our list if we run longer than that
-                    if(i.getAntDeviceNumber() == deviceFound.getAntDeviceNumber())
-                    {
-                        //Found already connected device, ignore
+        hrScanCtrl = AntPlusBikeCadencePcc.requestAsyncScanController(this, 0, new IBikeSpdCadAsyncScanResultReceiver() {
+			
+        	@Override
+			public void onSearchStopped(RequestAccessResult arg0) {
+				Log.d(TAG, "onSearchStopped");
+			}
+			
+			@Override
+			public void onSearchResult(BikeSpdCadAsyncScanResultDeviceInfo info) {
+				final AsyncScanController.AsyncScanResultDeviceInfo deviceFound = info.resultInfo;
+				
+				Log.d(TAG, "onSearchResult : " + deviceFound.getDeviceDisplayName() + ", combo : " + info.isSpdAndCadComboSensor);
+                for(AsyncScanResultDeviceInfo i: mScannedDeviceInfos) {
+                    if(i.getAntDeviceNumber() == deviceFound.getAntDeviceNumber()) {
                         return;
                     }
                 }
 
-                //We split up devices already connected to the plugin from un-connected devices to make this information more visible to the user,
-                //since the user most likely wants to be aware of which device they are already using in another app
                 mScannedDeviceInfos.add(deviceFound);
-                runOnUiThread(new Runnable()
-                {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void run()
-                    {
+                    public void run() {
                     	mAdapterDeviveList.add(deviceFound.getDeviceDisplayName());
                     	mAdapterDeviveList.notifyDataSetChanged();
                     }
                 });
-            }
-        });
+			}
+			
+		});
     }
     
     protected void requestConnectToResult(final AsyncScanResultDeviceInfo asyncScanResultDeviceInfo)
@@ -160,10 +142,10 @@ public class MainActivity extends Activity {
                 {
                     mTextStatus.setText("Connecting to " + asyncScanResultDeviceInfo.getDeviceDisplayName());
                     releaseHandle = hrScanCtrl.requestDeviceAccess(asyncScanResultDeviceInfo,
-                        new IPluginAccessResultReceiver<AntPlusHeartRatePcc>()
+                        new IPluginAccessResultReceiver<AntPlusBikeCadencePcc>()
                         {
                             @Override
-                            public void onResultReceived(AntPlusHeartRatePcc result,
+                            public void onResultReceived(AntPlusBikeCadencePcc result,
                                 RequestAccessResult resultCode, DeviceState initialDeviceState)
                             {
                                 if(resultCode == RequestAccessResult.SEARCH_TIMEOUT)
@@ -173,7 +155,7 @@ public class MainActivity extends Activity {
                                     {
                                         public void run()
                                         {
-                                            Toast.makeText(MainActivity.this, "Timed out attempting to connect, try again", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(BikeCadenceActivity.this, "Timed out attempting to connect, try again", Toast.LENGTH_LONG).show();
                                             mTextStatus.setText("Scanning for heart rate devices asynchronously...");
                                         }
                                     });
@@ -193,12 +175,12 @@ public class MainActivity extends Activity {
         );
     }
     
-    protected IPluginAccessResultReceiver<AntPlusHeartRatePcc> base_IPluginAccessResultReceiver =
-        new IPluginAccessResultReceiver<AntPlusHeartRatePcc>()
+    protected IPluginAccessResultReceiver<AntPlusBikeCadencePcc> base_IPluginAccessResultReceiver =
+        new IPluginAccessResultReceiver<AntPlusBikeCadencePcc>()
         {
 	        //Handle the result, connecting to events on success or reporting failure to user.
 	        @Override
-	        public void onResultReceived(AntPlusHeartRatePcc result, RequestAccessResult resultCode,
+	        public void onResultReceived(AntPlusBikeCadencePcc result, RequestAccessResult resultCode,
 	            DeviceState initialDeviceState)
 	        {
 	            switch(resultCode)
@@ -209,27 +191,27 @@ public class MainActivity extends Activity {
 	                    subscribeToHrEvents();
 	                    break;
 	                case CHANNEL_NOT_AVAILABLE:
-	                    Toast.makeText(MainActivity.this, "Channel Not Available", Toast.LENGTH_SHORT).show();
+	                    Toast.makeText(BikeCadenceActivity.this, "Channel Not Available", Toast.LENGTH_SHORT).show();
 	                    mTextStatus.setText("Error. Do Menu->Reset.");
 	                    break;
 	                case ADAPTER_NOT_DETECTED:
-	                    Toast.makeText(MainActivity.this, "ANT Adapter Not Available. Built-in ANT hardware or external adapter required.", Toast.LENGTH_SHORT).show();
+	                    Toast.makeText(BikeCadenceActivity.this, "ANT Adapter Not Available. Built-in ANT hardware or external adapter required.", Toast.LENGTH_SHORT).show();
 	                    mTextStatus.setText("Error. Do Menu->Reset.");
 	                    break;
 	                case BAD_PARAMS:
 	                    //Note: Since we compose all the params ourself, we should never see this result
-	                    Toast.makeText(MainActivity.this, "Bad request parameters.", Toast.LENGTH_SHORT).show();
+	                    Toast.makeText(BikeCadenceActivity.this, "Bad request parameters.", Toast.LENGTH_SHORT).show();
 	                    mTextStatus.setText("Error. Do Menu->Reset.");
 	                    break;
 	                case OTHER_FAILURE:
-	                    Toast.makeText(MainActivity.this, "RequestAccess failed. See logcat for details.", Toast.LENGTH_SHORT).show();
+	                    Toast.makeText(BikeCadenceActivity.this, "RequestAccess failed. See logcat for details.", Toast.LENGTH_SHORT).show();
 	                    mTextStatus.setText("Error. Do Menu->Reset.");
 	                    break;
 	                case DEPENDENCY_NOT_INSTALLED:
 	                	mTextStatus.setText("Error. Do Menu->Reset.");
-	                    AlertDialog.Builder adlgBldr = new AlertDialog.Builder(MainActivity.this);
+	                    AlertDialog.Builder adlgBldr = new AlertDialog.Builder(BikeCadenceActivity.this);
 	                    adlgBldr.setTitle("Missing Dependency");
-	                    adlgBldr.setMessage("The required service\n\"" + AntPlusHeartRatePcc.getMissingDependencyName() + "\"\n was not found. You need to install the ANT+ Plugins service or you may need to update your existing version if you already have it. Do you want to launch the Play Store to get it?");
+	                    adlgBldr.setMessage("The required service\n\"" + AntPlusBikeCadencePcc.getMissingDependencyName() + "\"\n was not found. You need to install the ANT+ Plugins service or you may need to update your existing version if you already have it. Do you want to launch the Play Store to get it?");
 	                    adlgBldr.setCancelable(true);
 	                    adlgBldr.setPositiveButton("Go to Store", new OnClickListener()
 	                    {
@@ -237,10 +219,10 @@ public class MainActivity extends Activity {
 	                        public void onClick(DialogInterface dialog, int which)
 	                        {
 	                            Intent startStore = null;
-	                            startStore = new Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id=" + AntPlusHeartRatePcc.getMissingDependencyPackageName()));
+	                            startStore = new Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id=" + AntPlusBikeCadencePcc.getMissingDependencyPackageName()));
 	                            startStore.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 	
-	                            MainActivity.this.startActivity(startStore);
+	                            BikeCadenceActivity.this.startActivity(startStore);
 	                        }
 	                    });
 	                    adlgBldr.setNegativeButton("Cancel", new OnClickListener()
@@ -259,13 +241,13 @@ public class MainActivity extends Activity {
 	                	mTextStatus.setText("Cancelled. Do Menu->Reset.");
 	                    break;
 	                case UNRECOGNIZED:
-	                    Toast.makeText(MainActivity.this,
+	                    Toast.makeText(BikeCadenceActivity.this,
 	                        "Failed: UNRECOGNIZED. PluginLib Upgrade Required?",
 	                        Toast.LENGTH_SHORT).show();
 	                    mTextStatus.setText("Error. Do Menu->Reset.");
 	                    break;
 	                default:
-	                    Toast.makeText(MainActivity.this, "Unrecognized result: " + resultCode, Toast.LENGTH_SHORT).show();
+	                    Toast.makeText(BikeCadenceActivity.this, "Unrecognized result: " + resultCode, Toast.LENGTH_SHORT).show();
 	                    mTextStatus.setText("Error. Do Menu->Reset.");
 	                    break;
 	            }
@@ -292,75 +274,21 @@ public class MainActivity extends Activity {
         
         public void subscribeToHrEvents()
         {
-            hrPcc.subscribeHeartRateDataEvent(new IHeartRateDataReceiver()
+        	hrPcc.subscribeCalculatedCadenceEvent(new ICalculatedCadenceReceiver()
             {
                 @Override
-                public void onNewHeartRateData(final long estTimestamp, EnumSet<EventFlag> eventFlags,
-                    final int computedHeartRate, final long heartBeatCount,
-                    final BigDecimal heartBeatEventTime, final DataState dataState)
+                public void onNewCalculatedCadence(final long estTimestamp,
+                    final EnumSet<EventFlag> eventFlags, final BigDecimal calculatedCadence)
                 {
-                    // Mark heart rate with asterisk if zero detected
-                    final String textHeartRate = String.valueOf(computedHeartRate)
-                        + ((DataState.ZERO_DETECTED.equals(dataState)) ? "*" : "");
-
                     runOnUiThread(new Runnable()
                     {
                         @Override
                         public void run()
                         {
-                            mTextValue.setText(textHeartRate);
+                            mTextValue.setText(String.valueOf(calculatedCadence));
                         }
                     });
-                }
-            });
 
-            hrPcc.subscribePage4AddtDataEvent(new IPage4AddtDataReceiver()
-            {
-                @Override
-                public void onNewPage4AddtData(final long estTimestamp, final EnumSet<EventFlag> eventFlags,
-                    final int manufacturerSpecificByte,
-                    final BigDecimal previousHeartBeatEventTime)
-                {
-                    //...
-                }
-            });
-
-            hrPcc.subscribeCumulativeOperatingTimeEvent(new ICumulativeOperatingTimeReceiver()
-            {
-                @Override
-                public void onNewCumulativeOperatingTime(final long estTimestamp, final EnumSet<EventFlag> eventFlags, final long cumulativeOperatingTime)
-                {
-                    //...
-                }
-            });
-
-            hrPcc.subscribeManufacturerAndSerialEvent(new IManufacturerAndSerialReceiver()
-            {
-                @Override
-                public void onNewManufacturerAndSerial(final long estTimestamp, final EnumSet<EventFlag> eventFlags, final int manufacturerID,
-                    final int serialNumber)
-                {
-                    //...
-                }
-            });
-
-            hrPcc.subscribeVersionAndModelEvent(new IVersionAndModelReceiver()
-            {
-                @Override
-                public void onNewVersionAndModel(final long estTimestamp, final EnumSet<EventFlag> eventFlags, final int hardwareVersion,
-                    final int softwareVersion, final int modelNumber)
-                {
-                    //...
-                }
-            });
-
-            hrPcc.subscribeCalculatedRrIntervalEvent(new ICalculatedRrIntervalReceiver()
-            {
-                @Override
-                public void onNewCalculatedRrInterval(final long estTimestamp,
-                    EnumSet<EventFlag> eventFlags, final BigDecimal rrInterval, final RrFlag flag)
-                {
-                    //...
                 }
             });
         }
