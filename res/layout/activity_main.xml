@@ -6,33 +6,38 @@
     tools:context=".HeartRateActivity" >
 
     <Button 
+        android:id="@+id/btn_display"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="显示界面"
         />
     
-    <Button 
+    <Button
+        android:id="@+id/btn_hr" 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="心率计绑定"
         />
     
     <Button 
+        android:id="@+id/btn_speedcad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="速度计/转速计/里程计"
         />
     
     <Button 
+        android:id="@+id/btn_power"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="功率计绑定"
         />
     
     <Button 
+        android:id="@+id/btn_cadence"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="心率绑定"
+        android:text="转速计绑定"
         />
     
 </LinearLayout>

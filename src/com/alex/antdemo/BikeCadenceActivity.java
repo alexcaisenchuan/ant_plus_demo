@@ -44,7 +44,7 @@ public class BikeCadenceActivity extends Activity {
 	ArrayAdapter<String> mAdapterDeviveList;
 	
 	//Ant
-	AntPlusBikeCadencePcc hrPcc = null;
+	AntPlusBikeCadencePcc cadencePcc = null;
 	AsyncScanController<AntPlusBikeCadencePcc> hrScanCtrl;
 	ArrayList<AsyncScanController.AsyncScanResultDeviceInfo> mScannedDeviceInfos;
 	PccReleaseHandle<AntPlusBikeCadencePcc> releaseHandle = null;
@@ -186,7 +186,7 @@ public class BikeCadenceActivity extends Activity {
 	            switch(resultCode)
 	            {
 	                case SUCCESS:
-	                    hrPcc = result;
+	                    cadencePcc = result;
 	                    mTextStatus.setText(result.getDeviceName() + ": " + initialDeviceState);
 	                    subscribeToHrEvents();
 	                    break;
@@ -266,7 +266,7 @@ public class BikeCadenceActivity extends Activity {
                     @Override
                     public void run()
                     {
-                        mTextStatus.setText(hrPcc.getDeviceName() + ": " + newDeviceState);
+                        mTextStatus.setText(cadencePcc.getDeviceName() + ": " + newDeviceState);
                     }
                 });
             }
@@ -274,7 +274,7 @@ public class BikeCadenceActivity extends Activity {
         
         public void subscribeToHrEvents()
         {
-        	hrPcc.subscribeCalculatedCadenceEvent(new ICalculatedCadenceReceiver()
+        	cadencePcc.subscribeCalculatedCadenceEvent(new ICalculatedCadenceReceiver()
             {
                 @Override
                 public void onNewCalculatedCadence(final long estTimestamp,

@@ -44,7 +44,7 @@ public class BikePowerActivity extends Activity {
 	ArrayAdapter<String> mAdapterDeviveList;
 	
 	//Ant
-	AntPlusBikePowerPcc hrPcc = null;
+	AntPlusBikePowerPcc powerPcc = null;
 	AsyncScanController<AntPlusBikePowerPcc> hrScanCtrl;
 	ArrayList<AsyncScanController.AsyncScanResultDeviceInfo> mScannedDeviceInfos;
 	PccReleaseHandle<AntPlusBikePowerPcc> releaseHandle = null;
@@ -198,7 +198,7 @@ public class BikePowerActivity extends Activity {
 	            switch(resultCode)
 	            {
 	                case SUCCESS:
-	                    hrPcc = result;
+	                    powerPcc = result;
 	                    mTextStatus.setText(result.getDeviceName() + ": " + initialDeviceState);
 	                    subscribeToHrEvents();
 	                    break;
@@ -278,7 +278,7 @@ public class BikePowerActivity extends Activity {
                     @Override
                     public void run()
                     {
-                        mTextStatus.setText(hrPcc.getDeviceName() + ": " + newDeviceState);
+                        mTextStatus.setText(powerPcc.getDeviceName() + ": " + newDeviceState);
                     }
                 });
             }
@@ -286,7 +286,7 @@ public class BikePowerActivity extends Activity {
         
         public void subscribeToHrEvents()
         {
-        	hrPcc.subscribeCalculatedPowerEvent(new ICalculatedPowerReceiver()
+        	powerPcc.subscribeCalculatedPowerEvent(new ICalculatedPowerReceiver()
             {
                 @Override
                 public void onNewCalculatedPower(

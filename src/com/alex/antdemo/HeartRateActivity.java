@@ -6,10 +6,7 @@ import java.util.EnumSet;
 
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.DataState;
-import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.ICalculatedRrIntervalReceiver;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IHeartRateDataReceiver;
-import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IPage4AddtDataReceiver;
-import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.RrFlag;
 import com.dsi.ant.plugins.antplus.pcc.defines.DeviceState;
 import com.dsi.ant.plugins.antplus.pcc.defines.EventFlag;
 import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
@@ -17,9 +14,6 @@ import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController;
 import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IDeviceStateChangeReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IPluginAccessResultReceiver;
-import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.ICumulativeOperatingTimeReceiver;
-import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IManufacturerAndSerialReceiver;
-import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IVersionAndModelReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDeviceInfo;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.IAsyncScanResultReceiver;
 
@@ -299,7 +293,6 @@ public class HeartRateActivity extends Activity {
                     final int computedHeartRate, final long heartBeatCount,
                     final BigDecimal heartBeatEventTime, final DataState dataState)
                 {
-                    // Mark heart rate with asterisk if zero detected
                     final String textHeartRate = String.valueOf(computedHeartRate)
                         + ((DataState.ZERO_DETECTED.equals(dataState)) ? "*" : "");
 
@@ -311,56 +304,6 @@ public class HeartRateActivity extends Activity {
                             mTextValue.setText(textHeartRate);
                         }
                     });
-                }
-            });
-
-            hrPcc.subscribePage4AddtDataEvent(new IPage4AddtDataReceiver()
-            {
-                @Override
-                public void onNewPage4AddtData(final long estTimestamp, final EnumSet<EventFlag> eventFlags,
-                    final int manufacturerSpecificByte,
-                    final BigDecimal previousHeartBeatEventTime)
-                {
-                    //...
-                }
-            });
-
-            hrPcc.subscribeCumulativeOperatingTimeEvent(new ICumulativeOperatingTimeReceiver()
-            {
-                @Override
-                public void onNewCumulativeOperatingTime(final long estTimestamp, final EnumSet<EventFlag> eventFlags, final long cumulativeOperatingTime)
-                {
-                    //...
-                }
-            });
-
-            hrPcc.subscribeManufacturerAndSerialEvent(new IManufacturerAndSerialReceiver()
-            {
-                @Override
-                public void onNewManufacturerAndSerial(final long estTimestamp, final EnumSet<EventFlag> eventFlags, final int manufacturerID,
-                    final int serialNumber)
-                {
-                    //...
-                }
-            });
-
-            hrPcc.subscribeVersionAndModelEvent(new IVersionAndModelReceiver()
-            {
-                @Override
-                public void onNewVersionAndModel(final long estTimestamp, final EnumSet<EventFlag> eventFlags, final int hardwareVersion,
-                    final int softwareVersion, final int modelNumber)
-                {
-                    //...
-                }
-            });
-
-            hrPcc.subscribeCalculatedRrIntervalEvent(new ICalculatedRrIntervalReceiver()
-            {
-                @Override
-                public void onNewCalculatedRrInterval(final long estTimestamp,
-                    EnumSet<EventFlag> eventFlags, final BigDecimal rrInterval, final RrFlag flag)
-                {
-                    //...
                 }
             });
         }

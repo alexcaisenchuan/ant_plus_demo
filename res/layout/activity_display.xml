@@ -18,7 +18,7 @@
             android:layout_width="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="速度 \n -- km/h"
+            android:text="速度 \n -- m/s"
             android:textColor="#FFFFFF"
             />
         
@@ -27,7 +27,7 @@
             android:layout_width="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="转速 \n -- c/h"
+            android:text="转速 \n -- rpm"
             android:textColor="#FFFFFF"
             />
         
@@ -36,7 +36,7 @@
             android:layout_width="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="里程 \n -- km"
+            android:text="里程 \n -- m"
             android:textColor="#FFFFFF"
             />
         
@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="心率 \n -- 次/h"
+            android:text="心率 \n -- rpm"
             android:textColor="#FFFFFF"
             />
         

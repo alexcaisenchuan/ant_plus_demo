@@ -17,9 +17,6 @@ import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IDeviceStateChangeReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IPluginAccessResultReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AntPlusBikeSpdCadCommonPcc.BikeSpdCadAsyncScanResultDeviceInfo;
-import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.ICumulativeOperatingTimeReceiver;
-import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IManufacturerAndSerialReceiver;
-import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IVersionAndModelReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDeviceInfo;
 
 import android.app.Activity;
@@ -312,36 +309,5 @@ public class BikeSpeedDistanceActivity extends Activity {
                     });
                 }
             });
-
-            speedPcc.subscribeCumulativeOperatingTimeEvent(new ICumulativeOperatingTimeReceiver()
-            {
-                @Override
-                public void onNewCumulativeOperatingTime(final long estTimestamp, final EnumSet<EventFlag> eventFlags, final long cumulativeOperatingTime)
-                {
-                    //...
-                }
-            });
-
-            speedPcc.subscribeManufacturerAndSerialEvent(new IManufacturerAndSerialReceiver()
-            {
-                @Override
-                public void onNewManufacturerAndSerial(final long estTimestamp, final EnumSet<EventFlag> eventFlags, final int manufacturerID,
-                    final int serialNumber)
-                {
-                    //...
-                }
-            });
-
-            speedPcc.subscribeVersionAndModelEvent(new IVersionAndModelReceiver()
-            {
-                @Override
-                public void onNewVersionAndModel(final long estTimestamp, final EnumSet<EventFlag> eventFlags, final int hardwareVersion,
-                    final int softwareVersion, final int modelNumber)
-                {
-                    //...
-                }
-            });
-
-            
         }
 }
