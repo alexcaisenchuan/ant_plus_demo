@@ -23,7 +23,7 @@
         android:id="@+id/btn_speedcad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="速度计/转速计/里程计"
+        android:text="速度计/转速计/里程计 绑定"
         />
     
     <Button 
