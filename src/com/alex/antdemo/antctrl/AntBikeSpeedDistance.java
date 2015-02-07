@@ -6,11 +6,17 @@ import java.util.EnumSet;
 import android.content.Context;
 import android.util.Log;
 
+import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeCadencePcc;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeSpeedDistancePcc;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeCadencePcc.ICalculatedCadenceReceiver;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeSpeedDistancePcc.CalculatedAccumulatedDistanceReceiver;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeSpeedDistancePcc.CalculatedSpeedReceiver;
+import com.dsi.ant.plugins.antplus.pcc.defines.DeviceState;
 import com.dsi.ant.plugins.antplus.pcc.defines.EventFlag;
 import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
+import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
+import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IDeviceStateChangeReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IPluginAccessResultReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AntPlusBikeSpdCadCommonPcc.BikeSpdCadAsyncScanResultDeviceInfo;
 import com.dsi.ant.plugins.antplus.pccbase.AntPlusBikeSpdCadCommonPcc.IBikeSpdCadAsyncScanResultReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDeviceInfo;
@@ -18,7 +24,10 @@ import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDe
 public class AntBikeSpeedDistance extends AntBase<AntPlusBikeSpeedDistancePcc> {
 	
 	protected static final String TAG = AntBikeSpeedDistance.class.getSimpleName();
-	
+    
+	AntPlusBikeCadencePcc bcPcc = null;
+    PccReleaseHandle<AntPlusBikeCadencePcc> bcReleaseHandle = null;
+    
 	public AntBikeSpeedDistance(Context ctx) {
 		super(ctx);
 	}
@@ -70,6 +79,53 @@ public class AntBikeSpeedDistance extends AntBase<AntPlusBikeSpeedDistancePcc> {
             	Log.d(TAG, "calculatedAccumulatedDistance : " + calculatedAccumulatedDistance);
             }
         });
+    	
+    	if (antPcc.isSpeedAndCadenceCombinedSensor())
+        {
+    		bcReleaseHandle = AntPlusBikeCadencePcc.requestAccess(
+	            this.context,
+	            antPcc.getAntDeviceNumber(), 0, true,
+	            new IPluginAccessResultReceiver<AntPlusBikeCadencePcc>()
+	            {
+	                @Override
+	                public void onResultReceived(AntPlusBikeCadencePcc result,
+	                    RequestAccessResult resultCode,
+	                    DeviceState initialDeviceStateCode)
+	                {
+	                    switch (resultCode)
+	                    {
+	                        case SUCCESS:
+	                            bcPcc = result;
+	                            bcPcc.subscribeCalculatedCadenceEvent(new ICalculatedCadenceReceiver()
+	                                {
+	                                    @Override
+	                                    public void onNewCalculatedCadence(
+	                                        long estTimestamp,
+	                                        EnumSet<EventFlag> eventFlags,
+	                                        final BigDecimal calculatedCadence)
+	                                    {
+	                                    	Log.d(TAG, "calculatedCadence : " + String.valueOf(calculatedCadence));
+	                                    }
+	                                });
+	                            break;
+	                        default:
+	                            break;
+	                    }
+	                }
+	            },
+	            new IDeviceStateChangeReceiver()
+	            {
+	                @Override
+	                public void onDeviceStateChange(final DeviceState newDeviceState)
+	                {
+	                	Log.d(TAG, "onDeviceStateChange : " + newDeviceState);
+	                	if (newDeviceState == DeviceState.DEAD) {
+                            bcPcc = null;
+	                	}
+	                }
+	            }
+            );
+        }
     }
 
 }
