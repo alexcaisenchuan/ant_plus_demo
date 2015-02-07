@@ -2,6 +2,7 @@ package com.alex.antdemo.activities;
 
 import com.alex.antdemo.App;
 import com.alex.antdemo.R;
+import com.arglass.common.ARCardListActivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,13 +28,13 @@ public class MainActivity extends Activity implements OnClickListener {
         btn = (Button)findViewById(R.id.btn_hr);
         btn.setOnClickListener(this);
         
-        btn = (Button)findViewById(R.id.btn_power);
-        btn.setOnClickListener(this);
-        
         btn = (Button)findViewById(R.id.btn_speed);
         btn.setOnClickListener(this);
         
         btn = (Button)findViewById(R.id.btn_cadence);
+        btn.setOnClickListener(this);
+        
+        btn = (Button)findViewById(R.id.btn_power);
         btn.setOnClickListener(this);
 	}
 	
@@ -61,13 +62,6 @@ public class MainActivity extends Activity implements OnClickListener {
 				break;
 			}
 				
-			case R.id.btn_power:{
-				Intent it = new Intent(this, DevListActivity.class);
-				it.putExtra(DevListActivity.INTENT_TYPE, DevListActivity.TYPE_POWER);
-				startActivity(it);
-				break;
-			}
-			
 			case R.id.btn_speed:{
 				Intent it = new Intent(this, DevListActivity.class);
 				it.putExtra(DevListActivity.INTENT_TYPE, DevListActivity.TYPE_SPEED);
@@ -79,6 +73,16 @@ public class MainActivity extends Activity implements OnClickListener {
 				Intent it = new Intent(this, DevListActivity.class);
 				it.putExtra(DevListActivity.INTENT_TYPE, DevListActivity.TYPE_CAD);
 				startActivity(it);
+				break;
+			}
+			
+			case R.id.btn_power:{
+				Intent it = new Intent(this, ARCardListActivity.class);
+				startActivity(it);
+				/*
+				Intent it = new Intent(this, DevListActivity.class);
+				it.putExtra(DevListActivity.INTENT_TYPE, DevListActivity.TYPE_POWER);
+				startActivity(it);*/
 				break;
 			}
 		}
