@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".HeartRateActivity" >
+    tools:context=".DevListActivity" >
 
     <Button 
         android:id="@+id/btn_display"
@@ -20,10 +20,17 @@
         />
     
     <Button 
-        android:id="@+id/btn_speedcad"
+        android:id="@+id/btn_speed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="速度计/转速计/里程计 绑定"
+        android:text="速度计/里程计绑定"
+        />
+    
+    <Button 
+        android:id="@+id/btn_cadence"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="踏频绑定"
         />
     
     <Button 
@@ -32,12 +39,4 @@
         android:layout_height="wrap_content"
         android:text="功率计绑定"
         />
-    
-    <Button 
-        android:id="@+id/btn_cadence"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="转速计绑定"
-        />
-    
 </LinearLayout>

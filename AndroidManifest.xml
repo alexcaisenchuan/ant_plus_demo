@@ -9,12 +9,13 @@
         android:targetSdkVersion="18" />
 
     <application
+        android:name="com.alex.antdemo.App"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.alex.antdemo.MainActivity"
+            android:name="com.alex.antdemo.activities.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,29 +25,18 @@
         </activity>
         
         <activity
-            android:name="com.alex.antdemo.DisplayActivity"
+            android:name="com.alex.antdemo.activities.DisplayActivity"
             android:label="@string/app_name" >
         </activity>
         
         <activity
-            android:name="com.alex.antdemo.HeartRateActivity"
+            android:name="com.alex.antdemo.activities.DevListActivity"
             android:label="@string/app_name" >
         </activity>
         
-        <activity
-            android:name="com.alex.antdemo.BikePowerActivity"
-            android:label="@string/app_name" >
-        </activity>
-        
-        <activity
-            android:name="com.alex.antdemo.BikeSpeedDistanceActivity"
-            android:label="@string/app_name" >
-        </activity>
-        
-        <activity
-            android:name="com.alex.antdemo.BikeCadenceActivity"
-            android:label="@string/app_name" >
-        </activity>
+        <service android:name="com.alex.antdemo.LocalService">
+            
+		</service> 
     </application>
 
 </manifest>

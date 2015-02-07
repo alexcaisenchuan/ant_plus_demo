@@ -1,4 +1,6 @@
-package com.alex.antdemo;
+package com.alex.antdemo.activities;
+
+import com.alex.antdemo.R;
 
 import android.app.Activity;
 import android.os.Bundle;
