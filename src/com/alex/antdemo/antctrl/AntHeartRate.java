@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import android.content.Context;
 import android.util.Log;
 
+import com.alex.antdemo.broadcast.AntValueBroadcast;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.DataState;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IHeartRateDataReceiver;
@@ -55,10 +56,15 @@ public class AntHeartRate extends AntBase<AntPlusHeartRatePcc> {
 					final long heartBeatCount,
 					final BigDecimal heartBeatEventTime,
 					final DataState dataState) {
+				
 				final String textHeartRate = String.valueOf(computedHeartRate)
 						+ ((DataState.ZERO_DETECTED.equals(dataState)) ? "*" : "");
-
+				
+				BigDecimal dec = new BigDecimal(computedHeartRate);
+				
 				Log.d(TAG, "hr : " + textHeartRate);
+				
+				AntValueBroadcast.sendHR(context, dec);
 			}
 		});
 	}

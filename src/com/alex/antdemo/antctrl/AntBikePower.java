@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import android.content.Context;
 import android.util.Log;
 
+import com.alex.antdemo.broadcast.AntValueBroadcast;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusBikePowerPcc;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusBikePowerPcc.DataSource;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusBikePowerPcc.ICalculatedPowerReceiver;
@@ -53,6 +54,7 @@ public class AntBikePower extends AntBase<AntPlusBikePowerPcc> {
                 final BigDecimal calculatedPower)
             {
             	Log.d(TAG, calculatedPower.toString() + "W");
+            	AntValueBroadcast.sendPower(context, calculatedPower);
             }
         });
     }

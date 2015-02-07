@@ -14,6 +14,7 @@
         >
         
         <TextView 
+            android:id="@+id/text_speed"
             android:layout_height="match_parent"
             android:layout_width="10dp"
             android:layout_weight="1"
@@ -22,7 +23,8 @@
             android:textColor="#FFFFFF"
             />
         
-        <TextView 
+        <TextView
+            android:id="@+id/text_cadence" 
             android:layout_height="match_parent"
             android:layout_width="10dp"
             android:layout_weight="1"
@@ -32,6 +34,7 @@
             />
         
         <TextView 
+            android:id="@+id/text_distance"
             android:layout_height="match_parent"
             android:layout_width="10dp"
             android:layout_weight="1"
@@ -50,10 +53,11 @@
         >
         
         <TextView 
+            android:id="@+id/text_hr"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="心率 \n -- rpm"
+            android:text="心率 \n -- bpm"
             android:textColor="#FFFFFF"
             />
         

@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import android.content.Context;
 import android.util.Log;
 
+import com.alex.antdemo.broadcast.AntValueBroadcast;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeCadencePcc;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeSpeedDistancePcc;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeCadencePcc.ICalculatedCadenceReceiver;
@@ -65,6 +66,7 @@ public class AntBikeCadence extends AntBase<AntPlusBikeCadencePcc> {
                 final EnumSet<EventFlag> eventFlags, final BigDecimal calculatedCadence)
             {
             	Log.d(TAG, "calculatedCadence : " + String.valueOf(calculatedCadence));
+            	AntValueBroadcast.sendCadence(context, calculatedCadence);
             }
         });
     	
@@ -91,6 +93,7 @@ public class AntBikeCadence extends AntBase<AntPlusBikeCadencePcc> {
 	                                        final BigDecimal calculatedSpeed)
 	                                    {
 	                                        Log.d(TAG, "calculatedSpeed : " + String.valueOf(calculatedSpeed));
+	                                        AntValueBroadcast.sendSpeed(context, calculatedSpeed);
 	                                    }
 	                                }
                                 );
@@ -102,6 +105,7 @@ public class AntBikeCadence extends AntBase<AntPlusBikeCadencePcc> {
                                         final BigDecimal calculatedAccumulatedDistance)
                                     {
                                     	Log.d(TAG, "calculatedAccumulatedDistance : " + calculatedAccumulatedDistance);
+                                    	AntValueBroadcast.sendDistance(context, calculatedAccumulatedDistance);
                                     }
                                 });
                                 break;

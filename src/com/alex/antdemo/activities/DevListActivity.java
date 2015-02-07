@@ -90,8 +90,7 @@ public class DevListActivity extends Activity {
     }
 
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
     	super.onDestroy();
     }
     

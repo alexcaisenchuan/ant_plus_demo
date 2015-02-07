@@ -1,7 +1,7 @@
 package com.alex.antdemo.activities;
 
+import com.alex.antdemo.App;
 import com.alex.antdemo.R;
-import com.alex.antdemo.services.LocalService;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,10 +12,14 @@ import android.widget.Button;
 
 public class MainActivity extends Activity implements OnClickListener {
 	
+	App mApp;
+	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        mApp = (App)getApplication();
         
         Button btn = (Button)findViewById(R.id.btn_display);
         btn.setOnClickListener(this);
@@ -31,9 +35,16 @@ public class MainActivity extends Activity implements OnClickListener {
         
         btn = (Button)findViewById(R.id.btn_cadence);
         btn.setOnClickListener(this);
-        
-        Intent intent = new Intent(this, LocalService.class);
-        startService(intent);
+	}
+	
+	@Override
+	protected void onDestroy() {
+		mApp.getAntHR().close();
+		mApp.getAntBikeCadence().close();
+		mApp.getAntBikeSpeedDistance().close();
+		mApp.getAntBikePower().close();
+		
+		super.onDestroy();
 	}
 
 	@Override
