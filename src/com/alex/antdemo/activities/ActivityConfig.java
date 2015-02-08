@@ -116,6 +116,18 @@ public class ActivityConfig extends ARCardListActivity implements OnClickListene
 		}
 	}
 	
+	private void showSuccessAndDismiss(final ARCardHUD hud) {
+		hud.setCenterText("解绑成功!");
+		
+		ThreadUtils.postOnUiThreadDelayed(new Runnable() {
+			@Override
+			public void run() {
+				hud.dismiss();
+				refreshViews();		//刷新界面状态
+			}
+		}, 800);
+	}
+	
 	/**
 	 * 展示解除绑定的弹出提示
 	 * @param ant
@@ -128,24 +140,29 @@ public class ActivityConfig extends ARCardListActivity implements OnClickListene
 			public void onClick(View v) {
 				//如果是混合的速度+踏频，则先关闭另外一个设备
 				if(ant instanceof AntBikeSpeedDistance) {
-					mApp.getAntBikeCadence().close();
+					mApp.getAntBikeCadence().disconnect();
+
+					ThreadUtils.postOnUiThreadDelayed(new Runnable() {
+						@Override
+						public void run() {
+							mApp.getAntBikeSpeedDistance().disconnect();
+							showSuccessAndDismiss(hud);
+						}
+					}, 800);
 				} else if(ant instanceof AntBikeCadence) {
-					mApp.getAntBikeSpeedDistance().close();
+					mApp.getAntBikeSpeedDistance().disconnect();
+					
+					ThreadUtils.postOnUiThreadDelayed(new Runnable() {
+						@Override
+						public void run() {
+							mApp.getAntBikeCadence().disconnect();
+							showSuccessAndDismiss(hud);
+						}
+					}, 800);
 				} else {
-					//...
+					ant.disconnect();
+					showSuccessAndDismiss(hud);
 				}
-				
-				ant.close();
-				
-				hud.setCenterText("解绑成功!");
-				
-				ThreadUtils.postOnUiThreadDelayed(new Runnable() {
-					@Override
-					public void run() {
-						hud.dismiss();
-						refreshViews();		//刷新界面状态
-					}
-				}, 800);
 			}
 		});
 		hud.show();

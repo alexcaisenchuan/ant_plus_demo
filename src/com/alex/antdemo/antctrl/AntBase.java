@@ -143,20 +143,29 @@ public abstract class AntBase <T extends AntPluginPcc> {
     }
     
     /**
+     * 断开连接
+     */
+    public void disconnect() {
+    	Log.d(TAG, this.getClass().getSimpleName() + "disconnect : " + antReleaseHandle);
+    	
+		mCurrentBindDevice = null;
+		
+    	if(antReleaseHandle != null) {
+            antReleaseHandle.close();
+            antReleaseHandle = null;
+        }
+    }
+    
+    /**
      * 关闭连接
      */
 	public void close() {
-		mCurrentBindDevice = null;
+		disconnect();
 		
     	if(antScanCtrl != null) {
     		antScanCtrl.closeScanController();
     		antScanCtrl = null;
     	}
-    	
-        if(antReleaseHandle != null) {
-            antReleaseHandle.close();
-            antReleaseHandle = null;
-        }
 	}
 	
 	/**

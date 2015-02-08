@@ -99,6 +99,8 @@ public class ActivityAntDeviceBind extends ARCardListActivity implements OnClick
 
     @Override
     protected void onDestroy() {
+    	mHud.dismiss();
+    	
     	super.onDestroy();
     }
 
