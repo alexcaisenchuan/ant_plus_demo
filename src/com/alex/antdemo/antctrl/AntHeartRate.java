@@ -35,13 +35,7 @@ public class AntHeartRate extends AntBase<AntPlusHeartRatePcc> {
 				@Override
 				public void onSearchResult(final AsyncScanResultDeviceInfo deviceFound) {
 					Log.d(TAG,"onSearchResult : " + deviceFound.getDeviceDisplayName());
-					for (AsyncScanResultDeviceInfo i : mScannedDeviceInfos) {
-						if (i.getAntDeviceNumber() == deviceFound.getAntDeviceNumber()) {
-							return;
-						}
-					}
-
-					mScannedDeviceInfos.add(deviceFound);
+					onDeviceFound(deviceFound);
 				}
 			}
 		);

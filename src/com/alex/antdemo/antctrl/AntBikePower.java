@@ -34,12 +34,7 @@ public class AntBikePower extends AntBase<AntPlusBikePowerPcc> {
             @Override
             public void onSearchResult(final AsyncScanResultDeviceInfo deviceFound) {
             	Log.d(TAG, "onSearchResult : " + deviceFound.getDeviceDisplayName());
-                for(AsyncScanResultDeviceInfo i: mScannedDeviceInfos) {
-                    if(i.getAntDeviceNumber() == deviceFound.getAntDeviceNumber()) {
-                        return;
-                    }
-                }
-                mScannedDeviceInfos.add(deviceFound);
+            	onDeviceFound(deviceFound);
             }
         });
     }

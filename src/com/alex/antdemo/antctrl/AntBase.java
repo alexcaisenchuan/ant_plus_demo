@@ -22,16 +22,28 @@ import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDe
 public abstract class AntBase <T extends AntPluginPcc> {
 	
 	private static final String TAG = AntBase.class.getSimpleName();
-
-	protected ArrayList<AsyncScanResultDeviceInfo> mScannedDeviceInfos;
+	
 	protected Context context = null;
 	
 	protected T antPcc = null;
 	protected AsyncScanController<T> antScanCtrl;
 	protected PccReleaseHandle<T> antReleaseHandle = null;
-	protected AntConnectListener connectListener = null;
-
-	/*
+	protected AntDeviceControlListener connectListener = null;
+	
+	/**
+	 * 扫描到的设备
+	 */
+	protected ArrayList<AsyncScanResultDeviceInfo> mScannedDeviceInfos;
+	/**
+	 * 当前正在连接的设备
+	 */
+	protected AsyncScanResultDeviceInfo mCurrentConnectingDevice;
+	/**
+	 * 当前绑定的设备
+	 */
+	protected AsyncScanResultDeviceInfo mCurrentBindDevice;
+	
+	/**
 	 * 需要子类实现的函数
 	 */
 	public abstract void startScan();
@@ -60,15 +72,16 @@ public abstract class AntBase <T extends AntPluginPcc> {
             	case SUCCESS: {
                     antPcc = result;
                     subscribeToDataEvents();
+                    mCurrentBindDevice = mCurrentConnectingDevice;
                     if(connectListener != null) {
-                    	connectListener.onConnectSuccess();
+                    	connectListener.onConnectSuccess(mCurrentConnectingDevice);
                     }
                     break;
             	}
             	
                 default: {
                 	if(connectListener != null) {
-                    	connectListener.onConnectFaild();
+                    	connectListener.onConnectFaild(mCurrentConnectingDevice);
                     }
                 	break;
                 }
@@ -94,26 +107,52 @@ public abstract class AntBase <T extends AntPluginPcc> {
 	}
 	
 	/**
-	 * 连接设备
-	 * @param asyncScanResultDeviceInfo
+	 * 找到新设备时的处理
 	 */
-    public void requestConnectToResult(final AsyncScanResultDeviceInfo asyncScanResultDeviceInfo) {
-    	Log.d(TAG, "Connecting to " + asyncScanResultDeviceInfo.getDeviceDisplayName());
-        antReleaseHandle = antScanCtrl.requestDeviceAccess(asyncScanResultDeviceInfo,
-    		base_IPluginAccessResultReceiver, 
-            base_IDeviceStateChangeReceiver
-        );
+	protected void onDeviceFound(AsyncScanResultDeviceInfo deviceFound) {
+		for(AsyncScanResultDeviceInfo i: mScannedDeviceInfos) {
+            if(i.getAntDeviceNumber() == deviceFound.getAntDeviceNumber()) {
+            	Log.d(TAG, "dev exist");
+                return;
+            }
+        }
+        mScannedDeviceInfos.add(deviceFound);
+        if(connectListener != null) {
+        	connectListener.onDeviceFound(deviceFound);
+        }
+	}
+	
+	/**
+	 * 连接设备
+	 * @param device
+	 */
+    public void requestConnectToResult(AsyncScanResultDeviceInfo device) {
+    	Log.d(TAG, "Connecting to " + device.getDeviceDisplayName());
+    	
+    	if(antScanCtrl != null) {
+	    	mCurrentConnectingDevice = device;
+	        antReleaseHandle = antScanCtrl.requestDeviceAccess(
+	        	device,
+	    		base_IPluginAccessResultReceiver, 
+	            base_IDeviceStateChangeReceiver
+	        );
+    	}
     }
     
     /**
      * 关闭连接
      */
 	public void close() {
+		mCurrentBindDevice = null;
+		
     	if(antScanCtrl != null) {
     		antScanCtrl.closeScanController();
+    		antScanCtrl = null;
     	}
+    	
         if(antReleaseHandle != null) {
             antReleaseHandle.close();
+            antReleaseHandle = null;
         }
 	}
 	
@@ -121,7 +160,15 @@ public abstract class AntBase <T extends AntPluginPcc> {
 	 * 设置连接监听函数
 	 * @param listener
 	 */
-	public void setConnectListener(AntConnectListener listener) {
+	public void setAntDeviceControlListener(AntDeviceControlListener listener) {
 		connectListener = listener;
+	}
+	
+	/**
+	 * 获得当前绑定的设备
+	 * @return
+	 */
+	public AsyncScanResultDeviceInfo getCurrentBindDevice() {
+		return mCurrentBindDevice;
 	}
 }

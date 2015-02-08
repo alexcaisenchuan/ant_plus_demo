@@ -18,6 +18,8 @@ import android.view.View;
  */
 public class ARCardListActivity extends Activity {
 
+	public static final String TAG = ARCardListActivity.class.getSimpleName();
+	
 	protected ViewPager mPager;
 	protected List<View> mViewList;
 	protected MyPagerAdapter mPagerAdapter;
@@ -52,30 +54,27 @@ public class ARCardListActivity extends Activity {
 		}
 
 		@Override
-		public void destroyItem(View arg0, int arg1, Object arg2) {
-			((ViewPager) arg0).removeView(mListViews.get(arg1));
-		}
-
-		@Override
-		public void finishUpdate(View arg0) {
-			//...
+		public void destroyItem(View collection, int position, Object view) {
+			((ViewPager) collection).removeView((View) view);
 		}
 
 		@Override
 		public int getCount() {
-			return mListViews.size();
+			int size = mListViews.size();
+			return size;
 		}
 
 		@Override
-		public Object instantiateItem(View arg0, int arg1) {
-			((ViewPager) arg0).addView(mListViews.get(arg1), 0);
-			return mListViews.get(arg1);
+		public Object instantiateItem(View collection, int position) {
+			View v = mListViews.get(position);
+			((ViewPager) collection).addView(v);
+			return v;
 		}
 
 		@Override
-		public boolean isViewFromObject(View arg0, Object arg1) {
-			return arg0 == (arg1);
-		}
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
 
 		@Override
 		public void restoreState(Parcelable arg0, ClassLoader arg1) {
@@ -90,6 +89,18 @@ public class ARCardListActivity extends Activity {
 		@Override
 		public void startUpdate(View arg0) {
 			//...
+		}
+
+		@Override
+		public void finishUpdate(View arg0) {
+			//...
+		}
+		
+		@Override
+		public int getItemPosition(Object object) {
+			//为了解决无法刷新View内容的问题
+			//http://stackoverflow.com/questions/7263291/viewpager-pageradapter-not-updating-the-view
+		    return POSITION_NONE;
 		}
 	}
 }

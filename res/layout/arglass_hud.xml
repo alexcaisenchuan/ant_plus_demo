@@ -3,15 +3,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#000000" >
+    android:background="#000000"
+    android:id="@+id/view_all" >
     
 	<TextView 
-	    android:id="@+id/text_title"
+	    android:id="@+id/text_top"
 	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
 	    android:gravity="center"
 	    android:textColor="#FFFFFF"
+	    />
+	
+	<TextView 
+	    android:id="@+id/text_center"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="3"
 	    android:textSize="30sp"
+	    android:gravity="center"
+	    android:textColor="#FFFFFF"
+	    />
+	
+	<TextView 
+	    android:id="@+id/text_bottom"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
+	    android:gravity="center"
+	    android:textColor="#FFFFFF"
 	    />
     
 </LinearLayout>

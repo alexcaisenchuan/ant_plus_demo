@@ -45,13 +45,7 @@ public class AntBikeSpeedDistance extends AntBase<AntPlusBikeSpeedDistancePcc> {
 			public void onSearchResult(BikeSpdCadAsyncScanResultDeviceInfo info) {
 				final AsyncScanResultDeviceInfo deviceFound = info.resultInfo;
 				Log.d(TAG, "onSearchResult : " + deviceFound.getDeviceDisplayName() + ", combo : " + info.isSpdAndCadComboSensor);
-                for(AsyncScanResultDeviceInfo i: mScannedDeviceInfos) {
-                    if(i.getAntDeviceNumber() == deviceFound.getAntDeviceNumber()) {
-                        return;
-                    }
-                }
-
-                mScannedDeviceInfos.add(deviceFound);
+				onDeviceFound(deviceFound);
 			}
 		});
     }

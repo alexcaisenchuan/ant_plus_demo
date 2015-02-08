@@ -5,7 +5,7 @@ import java.util.List;
 import com.alex.antdemo.App;
 import com.alex.antdemo.R;
 import com.alex.antdemo.antctrl.AntBase;
-import com.alex.antdemo.antctrl.AntConnectListener;
+import com.alex.antdemo.antctrl.AntDeviceControlListener;
 import com.alex.antdemo.utils.ThreadUtils;
 import com.arglass.common.ARCardHUD;
 import com.arglass.common.ARCardListActivity;
@@ -35,7 +35,6 @@ public class ActivityAntDeviceBind extends ARCardListActivity implements OnClick
 	App mApp;
 	AntBase mAntControl;
 	List<AsyncScanResultDeviceInfo> mDevList;
-	
 	ARCardHUD mHud;
 	
     @Override
@@ -44,8 +43,12 @@ public class ActivityAntDeviceBind extends ARCardListActivity implements OnClick
         
         mApp = (App)getApplication();
         
+        mHud = new ARCardHUD(this);
+        mHud.setCancelable(false);
+        
         Intent it = getIntent();
         int type = it.getIntExtra(INTENT_TYPE, TYPE_HR);
+        Log.d(TAG, "type : " + type);
         if(type == TYPE_CAD) {
         	mAntControl = mApp.getAntBikeCadence();
         } else if(type == TYPE_POWER) {
@@ -56,7 +59,7 @@ public class ActivityAntDeviceBind extends ARCardListActivity implements OnClick
         	mAntControl = mApp.getAntHR();
         }
         
-        Log.d(TAG, "type : " + type);
+		mAntControl.setAntDeviceControlListener(mListener);
         mDevList = mAntControl.getDevList();
         
         //刷新列表
@@ -67,17 +70,23 @@ public class ActivityAntDeviceBind extends ARCardListActivity implements OnClick
      * 刷新列表
      */
     private void refreshList() {
+    	Log.d(TAG, "refreshList : " + mDevList.size());
     	if(mDevList.size() == 0) {
     		//显示提示
     		ARCardView c = new ARCardView(this);
 	        c.textCenter.setText("搜索中...");
 	        mViewList.add(c);
     	} else {
+    		//先删掉所有界面
+    		mViewList.clear();
+    		
     		//显示所有设备
     		int index = 0;
+    		int size = mDevList.size();
     		for(AsyncScanResultDeviceInfo info : mDevList) {
     			ARCardView c = new ARCardView(this);
     	        c.setId(index);
+    	        c.textTop.setText(String.format("%d/%d", index + 1, size));
     	        c.textCenter.setText(info.getDeviceDisplayName());
     	        c.textBottom.setText("点击绑定");
     	        c.setOnClickListener(this);
@@ -87,7 +96,7 @@ public class ActivityAntDeviceBind extends ARCardListActivity implements OnClick
     		}
     	}
     	
-    	mPagerAdapter.notifyDataSetChanged();
+    	mPager.getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -104,28 +113,47 @@ public class ActivityAntDeviceBind extends ARCardListActivity implements OnClick
 				try {
 	        		AsyncScanResultDeviceInfo info = mDevList.get(index);
 	        		mAntControl.requestConnectToResult(info);
-	        		mAntControl.setConnectListener(new AntConnectListener() {
-						
-						@Override
-						public void onConnectSuccess() {
-							dissmissHudWithSuccess(true);
-						}
-						
-						@Override
-						public void onConnectFaild() {
-							dissmissHudWithSuccess(false);
-						}
-					});
-	        		
-	        		mHud = new ARCardHUD(this, R.style.MyDialog);
-	                mHud.setCancelable(false);
-	        		mHud.setTitle("正在连接...");
-	        		mHud.show();
+	        		showHud();
 	        	} catch (Exception e) {
 	        		e.printStackTrace();
 	        	}
 			}
 		}
+	}
+	
+	/**
+	 * 监听器
+	 */
+	AntDeviceControlListener mListener = new AntDeviceControlListener() {
+		
+		@Override
+		public void onConnectSuccess(AsyncScanResultDeviceInfo device) {
+			dissmissHudWithSuccess(true);
+		}
+		
+		@Override
+		public void onConnectFaild(AsyncScanResultDeviceInfo device) {
+			dissmissHudWithSuccess(false);
+		}
+
+		@Override
+		public void onDeviceFound(AsyncScanResultDeviceInfo device) {
+			//刷新列表
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					refreshList();					
+				}
+			});
+		}
+	};
+	
+	/**
+	 * 显示提示信息
+	 */
+	private void showHud() {
+		mHud.setCenterText("正在连接...");
+		mHud.show();
 	}
 	
 	/**
@@ -137,9 +165,9 @@ public class ActivityAntDeviceBind extends ARCardListActivity implements OnClick
 			@Override
 			public void run() {
 				if(success) {
-					mHud.setTitle("连接成功!");
+					mHud.setCenterText("连接成功!");
 				} else {
-					mHud.setTitle("连接失败!");
+					mHud.setCenterText("连接失败!");
 				}
 				ThreadUtils.postOnUiThreadDelayed(new Runnable() {
 					@Override
