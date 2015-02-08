@@ -47,12 +47,15 @@ public abstract class AntBase <T extends AntPluginPcc> {
         public void onResultReceived(T result, RequestAccessResult resultCode, DeviceState initialDeviceState) {
         	Log.d(TAG, "resultCode : " + resultCode + "," + result.getDeviceName() + " : " + initialDeviceState);
         	switch(resultCode) {
-            	case SUCCESS:
+            	case SUCCESS: {
                     antPcc = result;
                     subscribeToDataEvents();
                     break;
-                default:
+            	}
+            	
+                default: {
                 	break;
+                }
             }
         }
     };
