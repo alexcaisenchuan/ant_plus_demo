@@ -44,7 +44,6 @@ public class ActivityAntDeviceBind extends ARCardListActivity implements OnClick
         mApp = (App)getApplication();
         
         mHud = new ARCardHUD(this);
-        mHud.setCancelable(false);
         
         Intent it = getIntent();
         int type = it.getIntExtra(INTENT_TYPE, TYPE_HR);

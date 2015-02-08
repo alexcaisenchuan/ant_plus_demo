@@ -2,10 +2,12 @@ package com.arglass.common;
 
 import com.alex.antdemo.R;
 
+import android.app.ActionBar.LayoutParams;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 /**
@@ -30,7 +32,7 @@ public class ARCardHUD extends Dialog {
 	private View.OnClickListener mClickListener;
 	
 	public ARCardHUD(Context context) {
-		super(context, R.style.MyDialog);
+		super(context);
 	}
 	
 	public ARCardHUD(Context context, int theme) {
@@ -44,8 +46,17 @@ public class ARCardHUD extends Dialog {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// 这句代码不用我说也会知道是干嘛用的，是吧
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        // 这句代码换掉dialog默认背景，否则dialog的边缘发虚透明而且很宽, 总之达不到想要的效果
+        getWindow().setBackgroundDrawableResource(android.R.color.black);
+        
 		setContentView(R.layout.arglass_hud);
 		
+		// 这句话起全屏的作用
+        getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        
 		//整个View
 		mViewAll = findViewById(R.id.view_all);
 		if(mClickListener != null) {
