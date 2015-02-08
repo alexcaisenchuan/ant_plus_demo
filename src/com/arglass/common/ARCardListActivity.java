@@ -19,7 +19,7 @@ import android.view.View;
 public class ARCardListActivity extends Activity {
 
 	protected ViewPager mPager;
-	protected List<ARCardView> mCardList;
+	protected List<View> mViewList;
 	protected MyPagerAdapter mPagerAdapter;
 	
 	@Override
@@ -34,8 +34,8 @@ public class ARCardListActivity extends Activity {
 	 * 初始化ViewPager
 	 */
 	private void initViewPager() {
-		mCardList = new ArrayList<ARCardView>();
-		mPagerAdapter = new MyPagerAdapter(mCardList);
+		mViewList = new ArrayList<View>();
+		mPagerAdapter = new MyPagerAdapter(mViewList);
 		mPager = (ViewPager) findViewById(R.id.vPager);
 		mPager.setAdapter(mPagerAdapter);
 		mPager.setCurrentItem(0);
@@ -45,9 +45,9 @@ public class ARCardListActivity extends Activity {
 	 * ViewPager适配器
 	 */
 	public class MyPagerAdapter extends PagerAdapter {
-		public List<ARCardView> mListViews;
+		public List<View> mListViews;
 
-		public MyPagerAdapter(List<ARCardView> mListViews) {
+		public MyPagerAdapter(List<View> mListViews) {
 			this.mListViews = mListViews;
 		}
 

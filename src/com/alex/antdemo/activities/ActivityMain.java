@@ -1,6 +1,7 @@
 package com.alex.antdemo.activities;
 
 import com.alex.antdemo.App;
+import com.alex.antdemo.views.ViewAntParamDisplay;
 import com.arglass.common.ARCardListActivity;
 import com.arglass.common.ARCardView;
 
@@ -12,6 +13,7 @@ import android.view.View.OnClickListener;
 public class ActivityMain extends ARCardListActivity implements OnClickListener {
 	
 	App mApp;
+	ViewAntParamDisplay mAntDisplay;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,19 +21,30 @@ public class ActivityMain extends ARCardListActivity implements OnClickListener 
         
         mApp = (App)getApplication();
         
-        ARCardView c1 = new ARCardView(this);
-        c1.setId(1);
-        c1.textCenter.setText("仪表盘");
-        c1.setOnClickListener(this);
-        mCardList.add(c1);
+        mAntDisplay = new ViewAntParamDisplay(this);
+        mViewList.add(mAntDisplay);
         
         ARCardView c2 = new ARCardView(this);
         c2.setId(2);
         c2.textCenter.setText("配置");
         c2.setOnClickListener(this);
-        mCardList.add(c2);
+        mViewList.add(c2);
         
         mPagerAdapter.notifyDataSetChanged();
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		mAntDisplay.registerBroadcastReceiver();
+	}
+	
+	@Override
+	protected void onStop() {
+		mAntDisplay.unregisterBroadcastReceiver();
+		
+		super.onStop();
 	}
 	
 	@Override
