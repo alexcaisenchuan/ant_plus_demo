@@ -15,9 +15,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
 
-public class DisplayActivity extends Activity {
+public class ActivityDisplay extends Activity {
 
-	private static final String TAG = DisplayActivity.class.getSimpleName();
+	private static final String TAG = ActivityDisplay.class.getSimpleName();
 	
 	private MyBroadcastReceiver mReceiver;
 	private IntentFilter mIntentFilter;

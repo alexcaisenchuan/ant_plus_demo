@@ -18,8 +18,9 @@ import android.view.View;
  */
 public class ARCardListActivity extends Activity {
 
-	private ViewPager mPager;//页卡内容
-	private List<ARCardView> listViews; // Tab页面列表
+	protected ViewPager mPager;
+	protected List<ARCardView> mCardList;
+	protected MyPagerAdapter mPagerAdapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,21 +34,10 @@ public class ARCardListActivity extends Activity {
 	 * 初始化ViewPager
 	 */
 	private void initViewPager() {
+		mCardList = new ArrayList<ARCardView>();
+		mPagerAdapter = new MyPagerAdapter(mCardList);
 		mPager = (ViewPager) findViewById(R.id.vPager);
-		
-		ARCardView v1 = new ARCardView(this);
-		v1.textTop.setText("111");
-		ARCardView v2 = new ARCardView(this);
-		v2.textTop.setText("222");
-		ARCardView v3 = new ARCardView(this);
-		v3.textTop.setText("333");
-		
-		listViews = new ArrayList<ARCardView>();
-		listViews.add(v1);
-		listViews.add(v2);
-		listViews.add(v3);
-		
-		mPager.setAdapter(new MyPagerAdapter(listViews));
+		mPager.setAdapter(mPagerAdapter);
 		mPager.setCurrentItem(0);
 	}
 	

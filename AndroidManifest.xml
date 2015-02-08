@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.alex.antdemo.activities.MainActivity"
+            android:name="com.alex.antdemo.activities.ActivityMain"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,12 +25,17 @@
         </activity>
         
         <activity
-            android:name="com.alex.antdemo.activities.DisplayActivity"
+            android:name="com.alex.antdemo.activities.ActivityDisplay"
             android:label="@string/app_name" >
         </activity>
         
         <activity
-            android:name="com.alex.antdemo.activities.DevListActivity"
+            android:name="com.alex.antdemo.activities.ActivityConfig"
+            android:label="@string/app_name" >
+        </activity>
+        
+        <activity
+            android:name="com.alex.antdemo.activities.ActivityAntDeviceBind"
             android:label="@string/app_name" >
         </activity>
         

@@ -13,11 +13,26 @@ import android.widget.TextView;
  * @author caisenchuan
  */
 public class ARCardView extends LinearLayout {
-
+	
+	/**
+	 * 顶端文字
+	 */
 	public TextView textTop;
+	
+	/**
+	 * 中间文字
+	 */
 	public TextView textCenter;
+	
+	/**
+	 * 底部文字
+	 */
 	public TextView textBottom;
 	
+	/**
+	 * 构造函数
+	 * @param context
+	 */
 	public ARCardView(Context context) {
 		super(context);
 		initViews();

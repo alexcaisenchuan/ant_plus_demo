@@ -19,9 +19,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class DevListActivity extends Activity {
+/**
+ * 绑定Ant设备
+ * @author caisenchuan
+ */
+public class ActivityAntDeviceBind extends Activity {
 
-	protected static final String TAG = DevListActivity.class.getSimpleName();
+	protected static final String TAG = ActivityAntDeviceBind.class.getSimpleName();
 	
 	public static final String INTENT_TYPE = "type";
 	public static final int TYPE_HR    = 1;
@@ -82,6 +86,9 @@ public class DevListActivity extends Activity {
         refreshList();
     }
     
+    /**
+     * 刷新列表
+     */
     private void refreshList() {
         for(AsyncScanResultDeviceInfo info : mDevList) {
         	mAdapterDeviveList.add(info.getDeviceDisplayName());
