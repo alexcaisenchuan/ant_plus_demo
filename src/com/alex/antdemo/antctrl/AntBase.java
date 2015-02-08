@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.util.Log;
 
+import com.alex.antdemo.App;
 import com.dsi.ant.plugins.antplus.pcc.defines.DeviceState;
 import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc;
@@ -24,6 +25,7 @@ public abstract class AntBase <T extends AntPluginPcc> {
 	private static final String TAG = AntBase.class.getSimpleName();
 	
 	protected Context context = null;
+	protected App mApp = null;
 	
 	protected T antPcc = null;
 	protected AsyncScanController<T> antScanCtrl;
@@ -67,12 +69,12 @@ public abstract class AntBase <T extends AntPluginPcc> {
     new IPluginAccessResultReceiver<T>() {
         @Override
         public void onResultReceived(T result, RequestAccessResult resultCode, DeviceState initialDeviceState) {
-        	Log.d(TAG, "resultCode : " + resultCode + "," + result.getDeviceName() + " : " + initialDeviceState);
+        	Log.d(TAG, "resultCode : " + resultCode + "," + initialDeviceState);
         	switch(resultCode) {
             	case SUCCESS: {
                     antPcc = result;
-                    subscribeToDataEvents();
                     mCurrentBindDevice = mCurrentConnectingDevice;
+                    subscribeToDataEvents();
                     if(connectListener != null) {
                     	connectListener.onConnectSuccess(mCurrentConnectingDevice);
                     }
@@ -95,6 +97,7 @@ public abstract class AntBase <T extends AntPluginPcc> {
 	 */
 	public AntBase(Context ctx) {
 		this.context = ctx;
+		this.mApp = (App)ctx.getApplicationContext();
 		this.mScannedDeviceInfos = new ArrayList<AsyncScanResultDeviceInfo>();
 	}
 	

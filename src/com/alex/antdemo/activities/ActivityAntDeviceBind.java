@@ -3,7 +3,6 @@ package com.alex.antdemo.activities;
 import java.util.List;
 
 import com.alex.antdemo.App;
-import com.alex.antdemo.R;
 import com.alex.antdemo.antctrl.AntBase;
 import com.alex.antdemo.antctrl.AntDeviceControlListener;
 import com.alex.antdemo.utils.ThreadUtils;

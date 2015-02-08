@@ -126,7 +126,17 @@ public class ActivityConfig extends ARCardListActivity implements OnClickListene
 		hud.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				//如果是混合的速度+踏频，则先关闭另外一个设备
+				if(ant instanceof AntBikeSpeedDistance) {
+					mApp.getAntBikeCadence().close();
+				} else if(ant instanceof AntBikeCadence) {
+					mApp.getAntBikeSpeedDistance().close();
+				} else {
+					//...
+				}
+				
 				ant.close();
+				
 				hud.setCenterText("解绑成功!");
 				
 				ThreadUtils.postOnUiThreadDelayed(new Runnable() {
