@@ -5,6 +5,9 @@ import java.util.List;
 import com.alex.antdemo.App;
 import com.alex.antdemo.R;
 import com.alex.antdemo.antctrl.AntBase;
+import com.alex.antdemo.antctrl.AntConnectListener;
+import com.alex.antdemo.utils.ThreadUtils;
+import com.arglass.common.ARCardHUD;
 import com.arglass.common.ARCardListActivity;
 import com.arglass.common.ARCardView;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDeviceInfo;
@@ -32,6 +35,8 @@ public class ActivityAntDeviceBind extends ARCardListActivity implements OnClick
 	App mApp;
 	AntBase mAntControl;
 	List<AsyncScanResultDeviceInfo> mDevList;
+	
+	ARCardHUD mHud;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,10 +104,55 @@ public class ActivityAntDeviceBind extends ARCardListActivity implements OnClick
 				try {
 	        		AsyncScanResultDeviceInfo info = mDevList.get(index);
 	        		mAntControl.requestConnectToResult(info);
+	        		mAntControl.setConnectListener(new AntConnectListener() {
+						
+						@Override
+						public void onConnectSuccess() {
+							dissmissHudWithSuccess(true);
+						}
+						
+						@Override
+						public void onConnectFaild() {
+							dissmissHudWithSuccess(false);
+						}
+					});
+	        		
+	        		mHud = new ARCardHUD(this, R.style.MyDialog);
+	                mHud.setCancelable(false);
+	        		mHud.setTitle("正在连接...");
+	        		mHud.show();
 	        	} catch (Exception e) {
 	        		e.printStackTrace();
 	        	}
 			}
 		}
+	}
+	
+	/**
+	 * 显示文字，暂停几秒，关闭Hud
+	 * @param text
+	 */
+	private void dissmissHudWithSuccess(final boolean success) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(success) {
+					mHud.setTitle("连接成功!");
+				} else {
+					mHud.setTitle("连接失败!");
+				}
+				ThreadUtils.postOnUiThreadDelayed(new Runnable() {
+					@Override
+					public void run() {
+						//关闭提示框
+						mHud.dismiss();
+						//如果成功，关闭界面
+						if(success) {
+							finish();
+						}
+					}
+				}, 800);
+			}
+		});
 	}
 }

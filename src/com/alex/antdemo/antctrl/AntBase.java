@@ -29,10 +29,17 @@ public abstract class AntBase <T extends AntPluginPcc> {
 	protected T antPcc = null;
 	protected AsyncScanController<T> antScanCtrl;
 	protected PccReleaseHandle<T> antReleaseHandle = null;
+	protected AntConnectListener connectListener = null;
 
+	/*
+	 * 需要子类实现的函数
+	 */
 	public abstract void startScan();
 	protected abstract void subscribeToDataEvents();
 	
+	/**
+	 * 设备状态监听接口
+	 */
     protected IDeviceStateChangeReceiver base_IDeviceStateChangeReceiver =
     new IDeviceStateChangeReceiver() {
         @Override
@@ -41,6 +48,9 @@ public abstract class AntBase <T extends AntPluginPcc> {
         }
     };
     
+    /**
+     * 设备连接监听接口
+     */
     protected IPluginAccessResultReceiver<T> base_IPluginAccessResultReceiver =
     new IPluginAccessResultReceiver<T>() {
         @Override
@@ -50,10 +60,16 @@ public abstract class AntBase <T extends AntPluginPcc> {
             	case SUCCESS: {
                     antPcc = result;
                     subscribeToDataEvents();
+                    if(connectListener != null) {
+                    	connectListener.onConnectSuccess();
+                    }
                     break;
             	}
             	
                 default: {
+                	if(connectListener != null) {
+                    	connectListener.onConnectFaild();
+                    }
                 	break;
                 }
             }
@@ -99,5 +115,13 @@ public abstract class AntBase <T extends AntPluginPcc> {
         if(antReleaseHandle != null) {
             antReleaseHandle.close();
         }
+	}
+	
+	/**
+	 * 设置连接监听函数
+	 * @param listener
+	 */
+	public void setConnectListener(AntConnectListener listener) {
+		connectListener = listener;
 	}
 }
