@@ -94,7 +94,11 @@ public class ViewAntParamDisplay extends LinearLayout {
 				float value = dec.floatValue();
 				
 				if(action.equals(AntValueBroadcast.INTENT_ANT_VALUE_HR)) {
-					mTextHR.setText(String.format("心率 \n %.0f bpm", value));
+					if(value > 0.0) {
+						mTextHR.setText(String.format("心率 \n %.0f bpm", value));
+					} else {
+						mTextHR.setText("心率 \n -- bpm");
+					}
 				} else if(action.equals(AntValueBroadcast.INTENT_ANT_VALUE_CADENCE)) {
 					mTextCadence.setText(String.format("转速 \n %.0f rpm", value));
 				} else if(action.equals(AntValueBroadcast.INTENT_ANT_VALUE_SPEED)) {

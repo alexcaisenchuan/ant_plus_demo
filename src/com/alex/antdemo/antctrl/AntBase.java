@@ -52,6 +52,14 @@ public abstract class AntBase <T extends AntPluginPcc> {
 	protected abstract void subscribeToDataEvents();
 	
 	/**
+	 * 设备状态改变
+	 * @param newDeviceState
+	 */
+	public void deviceStateChange(DeviceState newDeviceState) {
+		//...
+	}
+	
+	/**
 	 * 设备状态监听接口
 	 */
     protected IDeviceStateChangeReceiver base_IDeviceStateChangeReceiver =
@@ -59,6 +67,7 @@ public abstract class AntBase <T extends AntPluginPcc> {
         @Override
         public void onDeviceStateChange(final DeviceState newDeviceState) {
         	Log.d(TAG, "onDeviceStateChange : " + newDeviceState);
+        	deviceStateChange(newDeviceState);
         }
     };
     

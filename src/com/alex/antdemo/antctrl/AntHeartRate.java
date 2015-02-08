@@ -10,6 +10,7 @@ import com.alex.antdemo.broadcast.AntValueBroadcast;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.DataState;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IHeartRateDataReceiver;
+import com.dsi.ant.plugins.antplus.pcc.defines.DeviceState;
 import com.dsi.ant.plugins.antplus.pcc.defines.EventFlag;
 import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDeviceInfo;
@@ -21,6 +22,14 @@ public class AntHeartRate extends AntBase<AntPlusHeartRatePcc> {
 
 	public AntHeartRate(Context ctx) {
 		super(ctx);
+	}
+	
+	@Override
+	public void deviceStateChange(DeviceState newDeviceState) {
+		super.deviceStateChange(newDeviceState);
+		if(newDeviceState != DeviceState.TRACKING) {
+			AntValueBroadcast.sendHR(context, new BigDecimal(0));
+		}
 	}
 	
 	@Override
