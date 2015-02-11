@@ -9,7 +9,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.TypefaceSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,10 +27,9 @@ public class ViewAntParamDisplay extends LinearLayout {
 	private MyBroadcastReceiver mReceiver;
 	private IntentFilter mIntentFilter;
 	
-	private TextView mTextHR;
-	private TextView mTextCadence;
-	private TextView mTextSpeed;
-	private TextView mTextDistance;
+	private TextView mTextTop;
+	private TextView mTextBottomLeft;
+	private TextView mTextBottomRight;
 	
 	/**
 	 * 构造函数
@@ -67,10 +70,14 @@ public class ViewAntParamDisplay extends LinearLayout {
 	private void initViews() {
 		LayoutInflater.from(getContext()).inflate(R.layout.activity_display, this);
 		
-		mTextHR = (TextView)findViewById(R.id.text_hr);
-		mTextCadence = (TextView)findViewById(R.id.text_cadence);
-		mTextSpeed = (TextView)findViewById(R.id.text_speed);
-		mTextDistance = (TextView)findViewById(R.id.text_distance);
+		mTextTop = (TextView)findViewById(R.id.text_top);
+		mTextTop.setText(getHRString(0));
+		
+		mTextBottomLeft = (TextView)findViewById(R.id.text_bottom_left);
+		mTextBottomLeft.setText(getSpeedString(0));
+		
+		mTextBottomRight = (TextView)findViewById(R.id.text_bottom_right);
+		mTextBottomRight.setText(getCadenceString(0));
 		
 		mReceiver = new MyBroadcastReceiver();
 		mIntentFilter = new IntentFilter();
@@ -81,6 +88,78 @@ public class ViewAntParamDisplay extends LinearLayout {
 		mIntentFilter.addAction(AntValueBroadcast.INTENT_ANT_VALUE_POWER);
 	}
 
+	/**
+	 * 获得样式文本
+	 */
+	private SpannableString getSpanString(String title, String value, String unit) {
+		SpannableString ret = new SpannableString(String.format("%s\n\n%s  %s", title, value, unit));
+		
+		int start = 0;
+		ret.setSpan(new AbsoluteSizeSpan(15, true), 0, (start + title.length()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		start += (title.length() + 2);		//跳过分隔符
+		ret.setSpan(new TypefaceSpan("default-bold"), start, start + value.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		ret.setSpan(new AbsoluteSizeSpan(55, true), start, (start + value.length()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		start += (value.length() + 2);
+		ret.setSpan(new AbsoluteSizeSpan(16, true), start, (start + unit.length()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		
+		return ret;
+	}
+	
+	/**
+	 * 获得心率字符串
+	 */
+	private SpannableString getHRString(float value) {
+		if(value > 0.0) {
+			return getSpanString("心率", String.format("%.0f", value), "bpm");
+		} else {
+			return getSpanString("心率", "--", "bpm");
+		}
+	}
+	
+	/**
+	 * 获得速度字符串
+	 */
+	private SpannableString getSpeedString(float value) {
+		if(value > 0.0) {
+			return getSpanString("速度", String.format("%.1f", value), "m/s");
+		} else {
+			return getSpanString("速度", "--", "m/s");
+		}
+	}
+	
+	/**
+	 * 获得距离字符串
+	 */
+	private SpannableString getDistanceString(float value) {
+		if(value > 0.0) {
+			return getSpanString("里程", String.format("%.1f", value), "m");
+		} else {
+			return getSpanString("里程", "--", "m");
+		}
+	}
+
+	/**
+	 * 获得踏频字符串
+	 */
+	private SpannableString getCadenceString(float value) {
+		if(value > 0.0) {
+			return getSpanString("踏频", String.format("%.0f", value), "rpm");
+		} else {
+			return getSpanString("踏频", "--", "rpm");
+		}
+	}
+	
+	/**
+	 * 获得功率字符串
+	 */
+	private SpannableString getPowerString(float value) {
+		if(value > 0.0) {
+			return getSpanString("功率", String.format("%.0f", value), "W");
+		} else {
+			return getSpanString("功率", "--", "W");
+		}
+	}
+	
 	/**
 	 * 广播接收器
 	 */
@@ -94,17 +173,13 @@ public class ViewAntParamDisplay extends LinearLayout {
 				float value = dec.floatValue();
 				
 				if(action.equals(AntValueBroadcast.INTENT_ANT_VALUE_HR)) {
-					if(value > 0.0) {
-						mTextHR.setText(String.format("心率 \n %.0f bpm", value));
-					} else {
-						mTextHR.setText("心率 \n -- bpm");
-					}
+					mTextTop.setText(getHRString(value));
 				} else if(action.equals(AntValueBroadcast.INTENT_ANT_VALUE_CADENCE)) {
-					mTextCadence.setText(String.format("转速 \n %.0f rpm", value));
+					mTextBottomLeft.setText(getCadenceString(value));
 				} else if(action.equals(AntValueBroadcast.INTENT_ANT_VALUE_SPEED)) {
-					mTextSpeed.setText(String.format("速度 \n %.1f m/s", value));
+					mTextBottomRight.setText(getSpeedString(value));
 				} else if(action.equals(AntValueBroadcast.INTENT_ANT_VALUE_DISTANCE)) {
-					mTextDistance.setText(String.format("里程 \n %.1f m", value));
+					//...
 				} else if(action.equals(AntValueBroadcast.INTENT_ANT_VALUE_POWER)) {
 					//...
 				} else {

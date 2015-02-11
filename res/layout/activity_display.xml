@@ -4,8 +4,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#000000" >
-    
+
     <!-- 上半部分 -->
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_weight="1"
+        >
+        
+        <TextView 
+            android:id="@+id/text_top"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            />
+        
+    </LinearLayout>
+    
+    <!-- 下半部分 -->
     <LinearLayout 
         android:layout_width="match_parent"
         android:layout_height="10dp"
@@ -14,53 +31,22 @@
         >
         
         <TextView 
-            android:id="@+id/text_speed"
+            android:id="@+id/text_bottom_left"
             android:layout_height="match_parent"
             android:layout_width="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="速度 \n -- m/s"
             android:textColor="#FFFFFF"
             />
         
         <TextView
-            android:id="@+id/text_cadence" 
+            android:id="@+id/text_bottom_right" 
             android:layout_height="match_parent"
             android:layout_width="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="转速 \n -- rpm"
-            android:textColor="#FFFFFF"
-            />
-        
-        <TextView 
-            android:id="@+id/text_distance"
-            android:layout_height="match_parent"
-            android:layout_width="10dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="里程 \n -- m"
             android:textColor="#FFFFFF"
             />
         
     </LinearLayout>
-
-    <!-- 下半部分 -->
-    <LinearLayout 
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_weight="1"
-        >
-        
-        <TextView 
-            android:id="@+id/text_hr"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="心率 \n -- bpm"
-            android:textColor="#FFFFFF"
-            />
-        
-    </LinearLayout>
-    
 </LinearLayout>
