@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 /**
@@ -47,14 +48,16 @@ public class ARCardHUD extends Dialog {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		// 这句代码不用我说也会知道是干嘛用的，是吧
+		//这句代码不用我说也会知道是干嘛用的，是吧
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        // 这句代码换掉dialog默认背景，否则dialog的边缘发虚透明而且很宽, 总之达不到想要的效果
+        //全屏
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //这句代码换掉dialog默认背景，否则dialog的边缘发虚透明而且很宽, 总之达不到想要的效果
         getWindow().setBackgroundDrawableResource(android.R.color.black);
         
 		setContentView(R.layout.arglass_hud);
 		
-		// 这句话起全屏的作用
+		//这句话起全屏的作用
         getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         
 		//整个View

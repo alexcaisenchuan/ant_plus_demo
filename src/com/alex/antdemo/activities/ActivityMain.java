@@ -12,6 +12,8 @@ import android.view.View.OnClickListener;
 
 public class ActivityMain extends ARCardListActivity implements OnClickListener {
 	
+	private static final int ID_CONFIG = 1;
+	
 	App mApp;
 	ViewAntParamDisplay mAntDisplay;
 	
@@ -25,7 +27,7 @@ public class ActivityMain extends ARCardListActivity implements OnClickListener 
         mViewList.add(mAntDisplay);
         
         ARCardView c2 = new ARCardView(this);
-        c2.setId(2);
+        c2.setId(ID_CONFIG);
         c2.textCenter.setText("配置");
         c2.setOnClickListener(this);
         mViewList.add(c2);
@@ -49,10 +51,11 @@ public class ActivityMain extends ARCardListActivity implements OnClickListener 
 	
 	@Override
 	protected void onDestroy() {
-		mApp.getAntHR().close();
-		mApp.getAntBikeCadence().close();
-		mApp.getAntBikeSpeedDistance().close();
-		mApp.getAntBikePower().close();
+		//退出程序不关闭
+		//mApp.getAntHR().close();
+		//mApp.getAntBikeCadence().close();
+		//mApp.getAntBikeSpeedDistance().close();
+		//mApp.getAntBikePower().close();
 		
 		super.onDestroy();
 	}
@@ -60,12 +63,7 @@ public class ActivityMain extends ARCardListActivity implements OnClickListener 
 	@Override
 	public void onClick(View arg0) {
 		switch(arg0.getId()) {
-			case 1: {
-				startActivity(new Intent(this, ActivityDisplay.class));
-				break;
-			}
-				
-			case 2: {
+			case ID_CONFIG: {
 				startActivity(new Intent(this, ActivityConfig.class));
 				break;
 			}
